@@ -1,0 +1,85 @@
+=====================================================================
+ SELF-BALANCING PICK & DROP ROBOT  -  COMPONENTS LIST
+=====================================================================
+
+ #  QTY  COMPONENT                      NOTES
+--- ---  -------------------------      -------------------------------
+ 1   1   ESP32 DevKit (30 or 38 pin)    Wi-Fi hotspot + brain. "ESP32 Dev
+                                        Module" board in Arduino IDE.
+ 2   1   MPU6050 module (GY-521)        Gyro + accelerometer (I2C).
+ 3   1   TB6612FNG motor driver module  Dual H-bridge, 1.2 A per channel.
+ 4   2   N20 gear motors                6 V, about 200-300 RPM is a good
+                                        choice. (12 V motors are weak on a
+                                        7.4 V battery.)
+ 5   2   N20 wheels (about 40-43 mm)    Rubber tyres for grip. Bigger
+                                        wheels are easier to balance.
+ 6   2   N20 motor brackets / mounts    To fix motors to the chassis.
+ 7   2   MG90S servo motors             1 = arm lift, 1 = gripper. Metal
+                                        gear version recommended.
+ 8   1   DC-DC buck converter (5 V)     At least 3 A (LM2596 or similar).
+                                        Powers ESP32 + both servos.
+ 9   2   Li-ion rechargeable cells      18650, 3.7 V each, same brand and
+                                        same charge level. Wired in SERIES
+                                        = 7.4 V (8.4 V full).
+10   1   2-cell battery holder          Series-wired 2x18650 holder.
+11   1   Battery charger module         Must support 2S (2 cells in series,
+                                        8.4 V). A 2S BMS board with charge
+                                        input is best. A TP4056 is 1-cell
+                                        only: do NOT use it on a 2S pack.
+12   1   ON/OFF switch                  Rocker or slide switch, 3 A or more.
+                                        Placed on the battery + wire.
+13   1   Capacitor 470-1000 uF, 16 V    On the 5 V rail near the servos.
+14   1   Capacitor 100 uF, 16 V         Across TB6612 VM and GND.
+15   1   Gripper mechanism              3D-printed or acrylic claw driven by
+                                        one MG90S. Keep it LIGHT.
+16   1   Arm / lift mechanism           Driven by the other MG90S.
+17   1   Robot chassis (2-3 layers)     Battery on the upper/middle layer,
+                                        electronics in the middle, arm on
+                                        top. Rigid, no flex.
+18   1   Perfboard or mini breadboard   Prefer soldered or screw-terminal
+                                        connections: loose jumper wires
+                                        cause falls.
+19   1   Jumper wires / hook-up wire    Female-female, plus 22 AWG for
+                                        motor and power lines.
+20   1   Screws, nuts, standoffs        M2 and M3.
+21   1   USB cable (data type)          For uploading code to the ESP32.
+
+
+ OPTIONAL BUT HELPFUL
+ --------------------
+   - Heat-shrink tube and a soldering iron.
+   - Terminal blocks (screw type) for power distribution.
+   - Fuse (3 A) on the battery + line.
+   - Double-sided tape or Velcro for the battery pack.
+   - Multimeter (to set the buck converter to exactly 5.0 V).
+   - Small weight (washers or coins) to help find the best centre of
+     gravity.
+
+
+ TOOLS
+ -----
+   Computer with Arduino IDE (ESP32 board package installed),
+   screwdriver set, soldering iron, wire stripper, multimeter.
+
+
+ SOFTWARE SETTINGS
+ -----------------
+   Board           : ESP32 Dev Module
+   Upload speed    : 115200 or 921600
+   Serial Monitor  : 115200 baud
+   Libraries       : none needed (built-in WiFi, WebServer, Wire,
+                     Preferences only)
+   Wi-Fi name      : DAVIDPUTRA
+   Wi-Fi password  : 12345678
+   Dashboard       : http://192.168.4.1
+
+
+ BUILD TIPS
+ ----------
+   - Keep the centre of gravity HIGH and the body narrow: the robot
+     balances more easily with weight higher above the axle, so put the
+     battery up, not down on the floor.
+   - Fix the MPU6050 firmly and flat, with its X arrow pointing forward.
+   - Use two identical wheels and tyres.
+   - Fully charge the battery before tuning; low voltage changes how
+     the motors respond.

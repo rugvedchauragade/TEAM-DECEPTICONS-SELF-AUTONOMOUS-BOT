@@ -1,0 +1,147 @@
+=====================================================================
+ SELF-BALANCING PICK & DROP ROBOT  -  CONNECTIONS
+ (matches self_balancing_robot.ino exactly)
+=====================================================================
+
+IMPORTANT RULES
+  1. ALL grounds (GND) must be joined together: battery, buck, ESP32,
+     TB6612, MPU6050, both servos.
+  2. Set the buck converter to 5.0 V with a multimeter BEFORE
+     connecting the ESP32 or servos.
+  3. Do NOT power servos from an ESP32 pin. Use the buck 5 V rail.
+  4. Do NOT plug in USB while the robot's battery is also feeding
+     the ESP32 VIN pin. Switch the robot OFF when uploading code by USB.
+
+
+---------------------------------------------------------------------
+ 1. POWER
+---------------------------------------------------------------------
+
+   Li-ion cell 1 (+) --- cell 2 (-)      <- two cells in SERIES (7.4 V,
+   Cell 2 (+) ----------------------        8.4 V when fully charged)
+   Cell 1 (-) ----------------------
+
+   Battery pack (+) --> [ON/OFF SWITCH] --> "SWITCHED +"
+   Battery pack (-) -------------------------------------> "GND"
+
+   Charger / 2S BMS module connects to the battery pack
+   (follow the module's own markings: B+, B-, P+, P-, etc.)
+
+   SWITCHED +  -->  Buck converter IN+     (GND -> Buck IN-)
+   SWITCHED +  -->  TB6612FNG  VM          (motor power, 7.4 V direct)
+
+   Buck converter OUT+ (5.0 V) -->  ESP32 VIN (5V) pin
+                               -->  Servo 1 red wire
+                               -->  Servo 2 red wire
+                               -->  470-1000 uF capacitor (+)
+   Buck converter OUT-  (GND)  -->  ESP32 GND, servo brown wires,
+                                    capacitor (-), and the main GND
+
+   ESP32 3V3 pin  -->  MPU6050 VCC
+                  -->  TB6612FNG VCC (logic)
+
+
+---------------------------------------------------------------------
+ 2. ESP32  <-->  TB6612FNG  (motor driver)
+---------------------------------------------------------------------
+
+   ESP32 GPIO     TB6612FNG pin     Function
+   ----------     -------------     ---------------------------
+   GPIO 13        STBY              Standby / enable
+   GPIO 26        AIN1              Left motor direction 1
+   GPIO 25        AIN2              Left motor direction 2
+   GPIO 27        PWMA              Left motor speed (PWM)
+   GPIO 33        BIN1              Right motor direction 1
+   GPIO 32        BIN2              Right motor direction 2
+   GPIO 4         PWMB              Right motor speed (PWM)
+   3V3            VCC               Logic power
+   GND            GND               Ground (all GND pins)
+   Battery +      VM                Motor power (7.4 V)
+
+   TB6612FNG pin     Goes to
+   -------------     ----------------------------
+   A01, A02          LEFT  N20 motor (2 wires)
+   B01, B02          RIGHT N20 motor (2 wires)
+
+   Tip: solder a 100 uF capacitor across VM and GND near the TB6612.
+   If a wheel spins the wrong way, DO NOT rewire: change
+   MOTOR_L_INVERT / MOTOR_R_INVERT in the code.
+
+
+---------------------------------------------------------------------
+ 3. ESP32  <-->  MPU6050 (GY-521 module)
+---------------------------------------------------------------------
+
+   ESP32 pin      MPU6050 pin
+   ---------      -----------
+   3V3            VCC
+   GND            GND
+   GPIO 21        SDA
+   GPIO 22        SCL
+   (not used)     INT, XDA, XCL
+   GND (or free)  AD0   -> I2C address 0x68 (what the code uses)
+
+   MOUNTING: fix the board FLAT (horizontal), close to the wheel
+   axle height, with the X arrow printed on the board pointing to the
+   FRONT of the robot. Keep it rigid - no wobble, no foam tape.
+
+
+---------------------------------------------------------------------
+ 4. ESP32  <-->  SERVOS (2x MG90S)
+---------------------------------------------------------------------
+
+   ESP32 GPIO     Servo
+   ----------     ------------------------------------
+   GPIO 18        ARM / LIFT servo   - signal (orange/yellow)
+   GPIO 19        GRIPPER servo      - signal (orange/yellow)
+
+   Both servos:   red   -> Buck 5 V
+                  brown -> GND (common)
+
+
+---------------------------------------------------------------------
+ 5. QUICK PIN SUMMARY
+---------------------------------------------------------------------
+
+   GPIO 4   PWMB          GPIO 22  MPU SCL
+   GPIO 13  STBY          GPIO 25  AIN2
+   GPIO 18  Arm servo     GPIO 26  AIN1
+   GPIO 19  Gripper servo GPIO 27  PWMA
+   GPIO 21  MPU SDA       GPIO 32  BIN2
+                          GPIO 33  BIN1
+
+
+---------------------------------------------------------------------
+ 6. BLOCK DIAGRAM
+---------------------------------------------------------------------
+
+                          +------------------+
+   2x Li-ion (7.4V) ----> | SWITCH | CHARGER |
+                          +--------+---------+
+                                   |
+                  +----------------+----------------+
+                  |                                 |
+            +-----v------+                    +-----v------+
+            | BUCK 5.0 V |                    |  TB6612FNG |--> Left N20
+            +--+----+----+                    |  (VM=7.4V) |--> Right N20
+               |    |                         +-----^------+
+        +------v-+  +--> Servo 1 + Servo 2          | 6 control wires
+        | ESP32  |------------------------------------+ + STBY
+        | VIN    |--- I2C (21,22) ---> MPU6050 (3V3)
+        +--------+--- GPIO 18, 19 ---> servo signals
+
+
+---------------------------------------------------------------------
+ 7. FIRST POWER-ON CHECKLIST
+---------------------------------------------------------------------
+
+   [ ] Buck output measured = 5.0 V before connecting ESP32/servos
+   [ ] Battery polarity checked (reverse polarity kills boards)
+   [ ] All grounds joined
+   [ ] Upload code with robot switched OFF and USB plugged in
+   [ ] Wheels lifted off the table for the first test
+   [ ] Serial Monitor (115200) shows "Gyro calibrated"
+   [ ] Dashboard angle is POSITIVE when robot leans forward
+   [ ] Wheels spin FORWARD when robot leans forward
+
+   Wi-Fi: DAVIDPUTRA / 12345678      Dashboard: http://192.168.4.1
