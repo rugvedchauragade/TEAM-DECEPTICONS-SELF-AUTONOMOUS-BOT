@@ -1,0 +1,164 @@
+=====================================================================
+ SELF-BALANCING PICK & DROP ROBOT - REQUIREMENTS
+ ESP32 + MPU6050 + TB6612FNG, controlled from a phone browser
+=====================================================================
+
+This file lists everything a person needs to build this robot:
+software, libraries, hardware, tools and skills. Follow the sections
+in order.
+
+
+---------------------------------------------------------------------
+ 1. SOFTWARE REQUIREMENTS
+---------------------------------------------------------------------
+
+ Item                     Version / Setting
+ -----------------------  ------------------------------------------
+ Arduino IDE              2.3.x or newer (1.8.19 also works)
+ ESP32 board package      "esp32" by Espressif Systems
+                          Works with core 2.0.x and 3.x
+                          Tested range: 2.0.17 and 3.0.x or newer
+ Board selection          ESP32 Dev Module
+ Upload speed             115200 (safe) or 921600 (faster)
+ Serial Monitor baud      115200
+ Language                 C++ (Arduino flavour)
+                          Core 2.x compiles as GNU++11
+                          Core 3.x compiles as GNU++17
+                          No extra compiler setup is needed
+ Operating system         Windows 10/11, macOS or Linux
+
+ Board package URL (add in Arduino IDE > Settings > Additional boards
+ manager URLs):
+   https://espressif.github.io/arduino-esp32/package_esp32_index.json
+
+ USB driver (install only if the ESP32 is not detected as a COM port):
+   CP210x driver  (for ESP32 boards with a CP2102 chip)
+   CH340 driver   (for ESP32 boards with a CH340 chip)
+
+
+---------------------------------------------------------------------
+ 2. LIBRARIES
+---------------------------------------------------------------------
+
+ No library needs to be installed. Everything comes with the ESP32
+ board package:
+
+   Arduino.h       core functions
+   WiFi.h          Wi-Fi hotspot (access point)
+   WebServer.h     web dashboard and control API
+   Wire.h          I2C communication with the MPU6050
+   Preferences.h   saving tuning values in flash memory
+
+ FreeRTOS (tasks and timing) is also built into the ESP32 core.
+
+
+---------------------------------------------------------------------
+ 3. HARDWARE REQUIREMENTS (BILL OF MATERIALS)
+---------------------------------------------------------------------
+
+ QTY  COMPONENT                        NOTES
+ ---  -------------------------------  -------------------------------
+  1   ESP32 DevKit (30 or 38 pin)      "ESP32 Dev Module" board
+  1   MPU6050 module (GY-521)          Gyro + accelerometer, I2C
+  1   TB6612FNG motor driver module    Dual H-bridge, 1.2 A per channel
+  2   N20 gear motors, 6 V             About 200-300 RPM
+  2   N20 wheels, 40-43 mm             Rubber tyres, identical pair
+  2   N20 motor brackets
+  2   MG90S servo motors               Metal gear: arm lift + gripper
+  1   Buck converter, 5 V, 3 A or more LM2596 or similar
+  2   18650 Li-ion cells, 3.7 V        Same brand, same charge level
+  1   2-cell (2S) battery holder       Series wiring
+  1   2S charger / 2S BMS module       NOT a TP4056 (1-cell only)
+  1   ON/OFF switch, 3 A or more
+  1   Capacitor 470-1000 uF, 16 V      On the 5 V rail near servos
+  1   Capacitor 100 uF, 16 V           Across TB6612 VM and GND
+  1   Gripper mechanism                Light, 3D-printed or acrylic
+  1   Arm / lift mechanism
+  1   Chassis (2-3 layers), rigid
+  1   Perfboard or mini breadboard     Soldered joints preferred
+  -   Jumper wires and 22 AWG wire
+  -   M2 and M3 screws, nuts, standoffs
+  1   USB data cable                   For uploading code
+
+ Recommended extras:
+   Fuse (3 A) on the battery + wire
+   Screw terminal blocks
+   Heat-shrink tube
+   Velcro or double-sided tape for the battery
+   Small weights (washers or coins) to find the best centre of gravity
+
+
+---------------------------------------------------------------------
+ 4. TOOLS REQUIRED
+---------------------------------------------------------------------
+
+   Computer with Arduino IDE
+   Soldering iron and solder
+   Multimeter (must set the buck converter to exactly 5.0 V)
+   Screwdriver set
+   Wire stripper and cutter
+   Phone with a web browser (to control the robot)
+
+
+---------------------------------------------------------------------
+ 5. ADDITIONAL ITEMS (ADDED BECAUSE THEY WERE MISSING)
+---------------------------------------------------------------------
+
+   Phone or laptop with Wi-Fi: needed to connect to the robot hotspot.
+   Charged battery pack: charge fully before tuning.
+   Wheel-lifting stand (a box or books): the wheels must be off the
+     table for the first test.
+   Basic electronics knowledge: reading a wiring table, soldering,
+     using a multimeter.
+   Patience for tuning: every robot needs its own Kp and Kd values.
+
+
+---------------------------------------------------------------------
+ 6. NETWORK SETTINGS (DEFAULTS IN THE CODE)
+---------------------------------------------------------------------
+
+   Wi-Fi name        DAVIDPUTRA
+   Wi-Fi password    12345678
+   Dashboard         http://192.168.4.1
+
+ Change the password in the code (AP_PASS) before using the robot
+ around other people. The password must be at least 8 characters.
+
+
+---------------------------------------------------------------------
+ 7. SAFETY RULES
+---------------------------------------------------------------------
+
+   1. Join all grounds together.
+   2. Set the buck converter to 5.0 V before connecting the ESP32.
+   3. Never power servos from an ESP32 pin.
+   4. Check battery polarity before connecting anything.
+   5. Switch the robot OFF while uploading code through USB.
+   6. Do not charge a 2S pack with a 1-cell TP4056 module.
+   7. Keep the first tests with the wheels off the ground.
+
+
+---------------------------------------------------------------------
+ 8. BUILD ORDER
+---------------------------------------------------------------------
+
+   1. Install Arduino IDE and the ESP32 board package.
+   2. Gather all components from section 3.
+   3. Wire everything as shown in the connections file.
+   4. Set the buck converter to 5.0 V.
+   5. Upload the code with the robot switched OFF.
+   6. Open Serial Monitor at 115200 and look for "Gyro calibrated".
+   7. Connect your phone to DAVIDPUTRA and open http://192.168.4.1
+   8. Check the angle sign and wheel directions (see the code header).
+   9. Tune Kp and Kd from the dashboard, then press "Apply & save".
+
+
+---------------------------------------------------------------------
+ 9. REPOSITORY FILES
+---------------------------------------------------------------------
+
+   self_balancing_robot.ino   main firmware
+   CONNECTIONS.txt            wiring guide
+   COMPONENTS.txt             parts list
+   requirements.txt           this file
+   LICENSE                    add one (MIT is a common choice)
