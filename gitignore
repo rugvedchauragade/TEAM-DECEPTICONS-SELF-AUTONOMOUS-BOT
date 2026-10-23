@@ -1,0 +1,36 @@
+# Arduino / ESP32 build output
+build/
+*.bin
+*.elf
+*.map
+*.hex
+*.eep
+*.lst
+
+# Arduino IDE
+.vscode/
+.idea/
+*.code-workspace
+.arduino-ide/
+.arduino15/
+
+# PlatformIO (in case you move to it later)
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Local secrets / private config
+secrets.h
+credentials.h
+*.env
+
+# Editor backups
+*~
+*.bak
+*.swp
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
